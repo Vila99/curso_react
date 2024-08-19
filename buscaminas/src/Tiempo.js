@@ -1,23 +1,46 @@
 import { useState, useEffect } from 'react';
 
-export default function Tiempo(){
+export default function Tiempo({ startTimer, resetTimer }) {
+  const [seconds, setSeconds] = useState(0);
+  const [isActive, setIsActive] = useState(false); // Añado la constante para poner el tiempo en activo o no
 
-    const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
 
-    useEffect(() => {
-        //Monta el temporizador
-        const idTemporizador = setInterval(
-            ()=>{setSeconds(seconds=>seconds+1)}
-            ,1000
-        )
-        
-        //Desmonta el Temporizador
-        return () => {
-            clearInterval(idTemporizador);
-        };
-    });
+    let idTemporizador;
 
-    return(
-        <div className='lcdText text-danger pe-2 m-2 borderInsideS' style={{width:54}}>{seconds}</div>
-    );
+    if (isActive) {
+      idTemporizador = setInterval(() => {
+        setSeconds(seconds => seconds + 1);
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(idTemporizador);
+    };
+
+  }, [isActive]);
+
+
+// Funcion del timer Inicio en celda y reset en boton comenzar partida
+  useEffect(() => {
+
+    if (startTimer) {
+      startTimer.current = () => {
+        setIsActive(true);
+      };
+    }
+
+    if (resetTimer) {
+      resetTimer.current = () => {
+        setSeconds(0);
+        setIsActive(false);
+      };
+    }
+  }, [startTimer, resetTimer]);
+
+  return (
+    <div className="lcdText text-danger pe-2 m-2 borderInsideS">
+      {seconds}
+    </div>
+  );
 }
