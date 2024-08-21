@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export default function Tiempo({ startTimer, resetTimer }) {
   const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false); // Añado la constante para poner el tiempo en activo o no
+  const [isActive, setIsActive] = useState(false);// Añado la constante para poner el tiempo en activo o no
 
   useEffect(() => {
 
