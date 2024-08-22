@@ -1,3 +1,6 @@
+const puntuacion = 0;
+
+
 function Celda({ valor = "", onCeldaClick }) {
     const obtenerEstiloCelda = () => {
       if (valor === " ") {
@@ -16,7 +19,7 @@ function Celda({ valor = "", onCeldaClick }) {
           style={{ ...obtenerEstiloCelda(), minWidth: 50, minHeight: 50 }}
           onClick={onCeldaClick}
         >
-          {valor == " " ? "\u00A0" : valor}
+          {valor === " " ? "\u00A0" : valor}
         </button>
       </div>
     );

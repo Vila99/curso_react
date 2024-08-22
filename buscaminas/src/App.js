@@ -5,73 +5,76 @@ import Tiempo from './Tiempo';
 import Tablero from './Tablero';
 
 function App() {
-  const [tamaño, setTamaño] = useState(5); // Tamaño inicial 5x5
+  const [tamaño, setTamaño] = useState(5);
   const [mapaValores, setMapaValores] = useState(Array(tamaño * tamaño).fill(" "));
-  const [valores, setValores] = useState([]); // Array de valores según la dificultad
-  const [puntuacion, setPuntuacion] = useState(0);  // Nuevo estado para la puntuación
-  
+  const [valores, setValores] = useState([]);
+  const [puntuacion, setPuntuacion] = useState(0);
+  const [celdasDescubiertas, setCeldasDescubiertas] = useState(0);
+  const [numeroBombas, setNumeroBombas] = useState(0);
+
   const startTimer = useRef(null);
   const resetTimer = useRef(null);
-  
 
-  // Ajuste dinámico del ancho del contenedor según el tamaño
+  const username = localStorage.getItem('username');
+
   const getContainerWidth = () => {
-    if (tamaño === 5) return 340; // Fácil (5x5)
-    if (tamaño === 10) return 680; // Medio (10x10)
-    if (tamaño === 15) return 1020; // Difícil (15x15)
+    if (tamaño === 5) return 340;
+    if (tamaño === 10) return 680;
+    if (tamaño === 15) return 1020;
   };
 
-  // Cre4acion de las celdas
   const celdas = mapaValores.map((item, index) => (
-    <div className="col-auto p-0" key={index} style={{ width: `${100/tamaño}%` }}>
+    <div className="col-auto p-0" key={index} style={{ width: `${100 / tamaño}%` }}>
       <Celda valor={item} onCeldaClick={() => mostrarValor(index)} />
     </div>
   ));
 
-  // Boton inicio de la partida + reset de timer
   const btnComenzar = () => {
     setMapaValores(Array(tamaño * tamaño).fill(" "));
+    setCeldasDescubiertas(0);
     if (resetTimer.current) {
       resetTimer.current();
     }
-    setPuntuacion(0);  // Reiniciar la puntuación
-  }
-
+    setPuntuacion(0);
+  };
 
   const mostrarValor = (index) => {
     const valoresNuevos = mapaValores.slice();
-    valoresNuevos[index] = valores[index];
+
+    if (mapaValores[index] !== " ") return;
 
     if (valores[index] === "*") {
-      // Esperar un momento para que se vea la bomba y luego mostrar la alerta
+      valoresNuevos[index] = valores[index];
+      setMapaValores(valoresNuevos);
       setTimeout(() => {
         alert(`Has perdido. Tu puntuación final es: ${puntuacion}`);
-        btnComenzar();  // Reiniciar la partida después de la alerta
-      }, 100);}
-
-    if (valores[index] === 0) {
-      revelarCeldasAdyacentes(valoresNuevos, index);
+        btnComenzar();
+      }, 100);
     } else {
-      valoresNuevos[index] = valores[index];
+      // Revelar celdas y actualizar el contador
+      const nuevasCeldasDescubiertas = revelarCeldas(valoresNuevos, index);
+      setCeldasDescubiertas(prev => prev + nuevasCeldasDescubiertas);
+      setMapaValores(valoresNuevos);
+      setPuntuacion(prevPuntuacion => prevPuntuacion + nuevasCeldasDescubiertas);
+
+      // Verificar si el jugador ha ganado
+      if (celdasDescubiertas + nuevasCeldasDescubiertas === tamaño * tamaño - numeroBombas) {
+        setTimeout(() => {
+          alert(`¡Has ganado! Tu puntuación final es: ${puntuacion}`);
+          btnComenzar();
+        }, 100);
+      }
+
+      if (startTimer.current) {
+        startTimer.current();
+      }
     }
+  };
 
-    setMapaValores(valoresNuevos);
-
-    // Incrementar la puntuación
-    // Como no se como funciona la puntuacion, pondremos que cuantos menos movimientos mejor lo has hecho, ademas le añadire el tiempo que ha tardado en completarlo ya que los dos terminos son indicativos de lo bien que lo has hecho.
-    setPuntuacion(prevPuntuacion => prevPuntuacion + 1);
-
-
-    if (startTimer.current) {
-      startTimer.current();
-    }
-  }
-
-
-  // Funcion para recelar las celdas cogiendo las coordenadas
-  const revelarCeldasAdyacentes = (mapa, index) => {
+  const revelarCeldas = (mapa, index) => {
     const stack = [index];
     const visitados = new Set();
+    let contadorReveladas = 0;
 
     const getCoordenadas = (i) => [Math.floor(i / tamaño), i % tamaño];
 
@@ -82,67 +85,89 @@ function App() {
       if (visitados.has(currentIndex)) continue;
       visitados.add(currentIndex);
 
-      mapa[currentIndex] = valores[currentIndex];
+      if (mapa[currentIndex] === " ") {
+        mapa[currentIndex] = valores[currentIndex];
+        contadorReveladas++; // Contar esta celda como revelada
 
-      const adyacentes = [];
+        // Si la celda es un 0, debemos explorar sus adyacentes
+        if (valores[currentIndex] === 0) {
+          const adyacentes = [];
+          if (fila > 0) adyacentes.push(currentIndex - tamaño);
+          if (fila < tamaño - 1) adyacentes.push(currentIndex + tamaño);
+          if (col > 0) adyacentes.push(currentIndex - 1);
+          if (col < tamaño - 1) adyacentes.push(currentIndex + 1);
 
-      // Obtener celdas adyacentes
-      if (fila > 0) adyacentes.push(currentIndex - tamaño);           // Arriba
-      if (fila < tamaño - 1) adyacentes.push(currentIndex + tamaño);  // Abajo
-      if (col > 0) adyacentes.push(currentIndex - 1);                 // Izquierda
-      if (col < tamaño - 1) adyacentes.push(currentIndex + 1);        // Derecha
-
-      // Expandir la búsqueda si es un 0
-      for (const adj of adyacentes) {
-          // Condición para evitar revelar bombas
-          if (valores[adj] === "*") {
-              continue; // No revelamos la bomba y seguimos con la siguiente celda adyacente
+          for (const adj of adyacentes) {
+            if (!visitados.has(adj) && mapa[adj] === " ") {
+              stack.push(adj);
+            }
           }
-
-          if (valores[adj] === 0 && !visitados.has(adj)) {
-              stack.push(adj); // Expandimos la búsqueda solo para celdas vacías
-          }
-
-          // Revelamos la celda adyacente (si no es una bomba)
-          mapa[adj] = valores[adj];
+        }
       }
     }
+
+    return contadorReveladas;
   };
 
-
-  // Función para generar el array de valores con bombas
   const generarValores = (tamaño, numeroBombas) => {
     const totalCeldas = tamaño * tamaño;
-    let arrayValores = Array(totalCeldas - numeroBombas).fill(null).map(() => Math.floor(Math.random() * 3));
-    const bombas = Array(numeroBombas).fill("*");
+    let arrayValores = Array(totalCeldas).fill(0);
 
-    arrayValores = arrayValores.concat(bombas);
-    
-    // Mezclar el array para que las bombas estén en posiciones aleatorias
-    for (let i = arrayValores.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arrayValores[i], arrayValores[j]] = [arrayValores[j], arrayValores[i]];
+    let bombasColocadas = 0;
+    while (bombasColocadas < numeroBombas) {
+      const index = Math.floor(Math.random() * totalCeldas);
+      if (arrayValores[index] !== "*") {
+        arrayValores[index] = "*";
+        bombasColocadas++;
+      }
+    }
+
+    const getCoordenadas = (i) => [Math.floor(i / tamaño), i % tamaño];
+
+    for (let i = 0; i < totalCeldas; i++) {
+      if (arrayValores[i] === "*") continue;
+
+      const [fila, col] = getCoordenadas(i);
+      let contadorBombas = 0;
+
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          const nuevaFila = fila + x;
+          const nuevaColumna = col + y;
+          if (
+            nuevaFila >= 0 && nuevaFila < tamaño &&
+            nuevaColumna >= 0 && nuevaColumna < tamaño
+          ) {
+            const indexAdyacente = nuevaFila * tamaño + nuevaColumna;
+            if (arrayValores[indexAdyacente] === "*") {
+              contadorBombas++;
+            }
+          }
+        }
+      }
+      arrayValores[i] = contadorBombas;
     }
 
     return arrayValores;
   };
 
-  // Manejar la selección del tamaño y la dificultad
   const handleSizeSelect = (nuevoTamaño) => {
     setTamaño(nuevoTamaño);
-    
+
     let numeroBombas;
     if (nuevoTamaño === 5) {
-      numeroBombas = 5;  // Fácil
+      numeroBombas = 3;
     } else if (nuevoTamaño === 10) {
-      numeroBombas = 10; // Medio
+      numeroBombas = 20;
     } else if (nuevoTamaño === 15) {
-      numeroBombas = 15; // Difícil
+      numeroBombas = 40;
     }
-    
+
     const nuevosValores = generarValores(nuevoTamaño, numeroBombas);
     setValores(nuevosValores);
     setMapaValores(Array(nuevoTamaño * nuevoTamaño).fill(" "));
+    setCeldasDescubiertas(0);
+    setNumeroBombas(numeroBombas);
 
     if (resetTimer.current) {
       resetTimer.current();
