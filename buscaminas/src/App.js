@@ -158,9 +158,9 @@ function App() {
     if (nuevoTamaño === 5) {
       numeroBombas = 3;
     } else if (nuevoTamaño === 10) {
-      numeroBombas = 20;
+      numeroBombas = 12;
     } else if (nuevoTamaño === 15) {
-      numeroBombas = 40;
+      numeroBombas = 24;
     }
 
     const nuevosValores = generarValores(nuevoTamaño, numeroBombas);
