@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef} from 'react';
 import './App.css';
 import Celda from './Celda';
 import Tiempo from './Tiempo';
@@ -14,11 +14,12 @@ function App() {
   const [celdasDescubiertas, setCeldasDescubiertas] = useState(0);
   const [numeroBombas, setNumeroBombas] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('username')); // Verifica el login
-
+  const [puntuaciones, setPuntuaciones] = useState([]);
 
   const startTimer = useRef(null);
   const resetTimer = useRef(null);
 
+// Pasar primero para que ejecute la ventana del login
   const username = localStorage.getItem('username');
 
   const handleLogin = (username) => {
@@ -30,6 +31,97 @@ function App() {
   }
 
 
+  // LOGICA PARA GENERAR LOS VALORESD DE LAS CELDAS
+  const generarValores = (tamaño, numeroBombas) => {
+    const totalCeldas = tamaño * tamaño;
+    let arrayValores = Array(totalCeldas).fill(0);
+
+    let bombasColocadas = 0;
+    while (bombasColocadas < numeroBombas) {
+      const index = Math.floor(Math.random() * totalCeldas);
+      if (arrayValores[index] !== "*") {
+        arrayValores[index] = "*";
+        bombasColocadas++;
+      }
+    }
+
+    const getCoordenadas = (i) => [Math.floor(i / tamaño), i % tamaño];
+
+    for (let i = 0; i < totalCeldas; i++) {
+      if (arrayValores[i] === "*") continue;
+
+      const [fila, col] = getCoordenadas(i);
+      let contadorBombas = 0;
+
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          const nuevaFila = fila + x;
+          const nuevaColumna = col + y;
+          if (
+            nuevaFila >= 0 && nuevaFila < tamaño &&
+            nuevaColumna >= 0 && nuevaColumna < tamaño
+          ) {
+            const indexAdyacente = nuevaFila * tamaño + nuevaColumna;
+            if (arrayValores[indexAdyacente] === "*") {
+              contadorBombas++;
+            }
+          }
+        }
+      }
+      arrayValores[i] = contadorBombas;
+    }
+
+    return arrayValores;
+  };
+
+// ELECCION DEL TAMAÑO DEL TABLERO Y SU CONFIG DE BOMBAS
+  const handleSizeSelect = (nuevoTamaño) => {
+    setTamaño(nuevoTamaño);
+
+    let numeroBombas;
+    if (nuevoTamaño === 5) {
+      numeroBombas = 3;
+    } else if (nuevoTamaño === 10) {
+      numeroBombas = 10;
+    } else if (nuevoTamaño === 15) {
+      numeroBombas = 24;
+    }
+
+    const nuevosValores = generarValores(nuevoTamaño, numeroBombas);
+    setPuntuacion(0);
+    setValores(nuevosValores);
+    setMapaValores(Array(nuevoTamaño * nuevoTamaño).fill(" "));
+    setCeldasDescubiertas(0);
+    setNumeroBombas(numeroBombas);
+
+    // Reseteo del tiempo
+    if (resetTimer.current) {
+      resetTimer.current();
+    }
+  };
+
+  // PUNTUACIONES PARA EL MARCADOR COGER LAS 3 MEJORES
+  const cargarPuntuaciones = () => {
+    const puntuacionesGuardadas = JSON.parse(localStorage.getItem('puntuaciones')) || [];
+    const puntuacionesOrdenadas = puntuacionesGuardadas
+      .sort((a, b) => b.puntuacion - a.puntuacion)
+      .slice(0, 3);
+    setPuntuaciones(puntuacionesOrdenadas);
+  };
+  // Guardamos la puntuacion en el LOCALSTORAGE'
+  const guardarPuntuacion = (nuevaPuntuacion) => {
+    const username = localStorage.getItem('username');
+    if (username) {
+      const puntuacionesGuardadas = JSON.parse(localStorage.getItem('puntuaciones')) || [];
+      const nuevasPuntuaciones = [...puntuacionesGuardadas, { username, puntuacion: nuevaPuntuacion }];
+      localStorage.setItem('puntuaciones', JSON.stringify(nuevasPuntuaciones));
+      
+      // En lugar de actualizar el estado directamente, volvemos a cargar las puntuaciones
+      cargarPuntuaciones();
+    }
+  };
+
+// Tamaño del container segun las celdas para que quede estetico
   const getContainerWidth = () => {
     if (tamaño === 5) return 340;
     if (tamaño === 10) return 680;
@@ -61,9 +153,9 @@ function App() {
 
     if (valores[index] === "*") {
       valoresNuevos[index] = valores[index];
+      guardarPuntuacion(puntuacion);
       setMapaValores(valoresNuevos);
       setTimeout(() => {
-        localStorage.getItem(puntuacion)
         alert(`Has perdido. Tu puntuación final es: ${puntuacion}`);
         btnComenzar();
       }, 100);
@@ -76,6 +168,7 @@ function App() {
 
       // Verificar si el jugador ha ganado
       if (celdasDescubiertas + nuevasCeldasDescubiertas === tamaño * tamaño - numeroBombas) {
+        guardarPuntuacion(puntuacion);
         setTimeout(() => {
           alert(`¡Has ganado! Tu puntuación final es: ${puntuacion}`);
           btnComenzar();
@@ -128,76 +221,7 @@ function App() {
     return contadorReveladas;
   };
 
-// LOGICA PARA GENERAR LOS VALORESD DE LAS CELDAS
-  const generarValores = (tamaño, numeroBombas) => {
-    const totalCeldas = tamaño * tamaño;
-    let arrayValores = Array(totalCeldas).fill(0);
 
-    let bombasColocadas = 0;
-    while (bombasColocadas < numeroBombas) {
-      const index = Math.floor(Math.random() * totalCeldas);
-      if (arrayValores[index] !== "*") {
-        arrayValores[index] = "*";
-        bombasColocadas++;
-      }
-    }
-
-    const getCoordenadas = (i) => [Math.floor(i / tamaño), i % tamaño];
-
-    for (let i = 0; i < totalCeldas; i++) {
-      if (arrayValores[i] === "*") continue;
-
-      const [fila, col] = getCoordenadas(i);
-      let contadorBombas = 0;
-
-      for (let x = -1; x <= 1; x++) {
-        for (let y = -1; y <= 1; y++) {
-          const nuevaFila = fila + x;
-          const nuevaColumna = col + y;
-          if (
-            nuevaFila >= 0 && nuevaFila < tamaño &&
-            nuevaColumna >= 0 && nuevaColumna < tamaño
-          ) {
-            const indexAdyacente = nuevaFila * tamaño + nuevaColumna;
-            if (arrayValores[indexAdyacente] === "*") {
-              contadorBombas++;
-            }
-          }
-        }
-      }
-      arrayValores[i] = contadorBombas;
-    }
-
-    return arrayValores;
-  };
-
-// ELECCION DEL TAMAÑO DEL TABLERO Y SU CONFIG DE BOMBAS
-  const handleSizeSelect = (nuevoTamaño) => {
-    setTamaño(nuevoTamaño);
-
-    let numeroBombas;
-    if (nuevoTamaño === 5) {
-      numeroBombas = 3;
-    } else if (nuevoTamaño === 10) {
-      numeroBombas = 12;
-    } else if (nuevoTamaño === 15) {
-      numeroBombas = 24;
-    }
-
-    const nuevosValores = generarValores(nuevoTamaño, numeroBombas);
-    setValores(nuevosValores);
-    setMapaValores(Array(nuevoTamaño * nuevoTamaño).fill(" "));
-    setCeldasDescubiertas(0);
-    setNumeroBombas(numeroBombas);
-
-    // Reseteo del tiempo
-    if (resetTimer.current) {
-      resetTimer.current();
-    }
-  };
-
-
-  
 
 
 // HTML PASADO A REACT
@@ -225,8 +249,14 @@ function App() {
       </div>
       <div><button className="btn btn-outline-secondary mt-2" onClick={btnComenzar}>COMIENZA LA PARTIDA</button></div>
       <div className="mt-4">
-        <h3>Marcador de Victorias</h3>
-        <ul style={{ listStyle: 'none' }}>
+        <h3>Top 3 Puntuaciones</h3>
+        <ul className="list-group mb-3">
+          {puntuaciones.map((item, index) => (
+            <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+              <span>{item.username}</span>
+              <span className="badge bg-danger rounded-pill">{item.puntuacion}</span>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
