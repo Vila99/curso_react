@@ -2,6 +2,7 @@ import React from 'react';
 
 function SelectorTamano({ onSizeSelect }) {
   const tamaños = [
+    { label: "---Selecciona un tamaño---)", value: 0 },
     { label: "Pequeño (5x5)", value: 5 },
     { label: "Mediano (10x10)", value: 10 },
     { label: "Grande (15x15)", value: 15 },

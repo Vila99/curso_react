@@ -7,7 +7,7 @@ import Login from './login';
 
 
 function App() {
-  const [tamaño, setTamaño] = useState(5);
+  const [tamaño, setTamaño] = useState(0);
   const [mapaValores, setMapaValores] = useState(Array(tamaño * tamaño).fill(" "));
   const [valores, setValores] = useState([]);
   const [puntuacion, setPuntuacion] = useState(0);
@@ -123,6 +123,7 @@ function App() {
 
 // Tamaño del container segun las celdas para que quede estetico
   const getContainerWidth = () => {
+    if (tamaño === 0) return 340;
     if (tamaño === 5) return 340;
     if (tamaño === 10) return 680;
     if (tamaño === 15) return 1020;
@@ -249,7 +250,7 @@ function App() {
       </div>
       <div><button className="btn btn-outline-secondary mt-2" onClick={btnComenzar}>COMIENZA LA PARTIDA</button></div>
       <div className="mt-4">
-        <h3>Top 3 Puntuaciones</h3>
+        <h3>Top Puntuaciones</h3>
         <ul className="list-group mb-3">
           {puntuaciones.map((item, index) => (
             <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
