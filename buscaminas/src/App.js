@@ -3,6 +3,8 @@ import './App.css';
 import Celda from './Celda';
 import Tiempo from './Tiempo';
 import Tablero from './Tablero';
+import Login from './login';
+
 
 function App() {
   const [tamaño, setTamaño] = useState(5);
@@ -11,11 +13,22 @@ function App() {
   const [puntuacion, setPuntuacion] = useState(0);
   const [celdasDescubiertas, setCeldasDescubiertas] = useState(0);
   const [numeroBombas, setNumeroBombas] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('username')); // Verifica el login
+
 
   const startTimer = useRef(null);
   const resetTimer = useRef(null);
 
   const username = localStorage.getItem('username');
+
+  const handleLogin = (username) => {
+    setIsLoggedIn(true);
+  };
+  
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
+
 
   const getContainerWidth = () => {
     if (tamaño === 5) return 340;
@@ -29,6 +42,7 @@ function App() {
     </div>
   ));
 
+  // Logica del boton comenzar partida
   const btnComenzar = () => {
     setMapaValores(Array(tamaño * tamaño).fill(" "));
     setCeldasDescubiertas(0);
@@ -38,6 +52,8 @@ function App() {
     setPuntuacion(0);
   };
 
+
+// Logica de mostrar valores en las celdas
   const mostrarValor = (index) => {
     const valoresNuevos = mapaValores.slice();
 
@@ -47,6 +63,7 @@ function App() {
       valoresNuevos[index] = valores[index];
       setMapaValores(valoresNuevos);
       setTimeout(() => {
+        localStorage.getItem(puntuacion)
         alert(`Has perdido. Tu puntuación final es: ${puntuacion}`);
         btnComenzar();
       }, 100);
@@ -71,6 +88,8 @@ function App() {
     }
   };
 
+
+  // REVELAR LAS CELDAS + LOGICA DE LAS ADYACENETES
   const revelarCeldas = (mapa, index) => {
     const stack = [index];
     const visitados = new Set();
@@ -105,10 +124,11 @@ function App() {
         }
       }
     }
-
+    // contador para la puntuacion
     return contadorReveladas;
   };
 
+// LOGICA PARA GENERAR LOS VALORESD DE LAS CELDAS
   const generarValores = (tamaño, numeroBombas) => {
     const totalCeldas = tamaño * tamaño;
     let arrayValores = Array(totalCeldas).fill(0);
@@ -151,6 +171,7 @@ function App() {
     return arrayValores;
   };
 
+// ELECCION DEL TAMAÑO DEL TABLERO Y SU CONFIG DE BOMBAS
   const handleSizeSelect = (nuevoTamaño) => {
     setTamaño(nuevoTamaño);
 
@@ -169,13 +190,20 @@ function App() {
     setCeldasDescubiertas(0);
     setNumeroBombas(numeroBombas);
 
+    // Reseteo del tiempo
     if (resetTimer.current) {
       resetTimer.current();
     }
   };
 
+
+  
+
+
+// HTML PASADO A REACT
   return (
     <div className="container text-center" style={{ width: getContainerWidth() }}>
+      <h2>Bienvenido, {username}</h2>
       <Tablero onSizeSelect={handleSizeSelect} />
       <div className="grid bg-body-secondary py-2 px-4 borderOutSide m-0">
         <div className="row bg-body-secondary borderInside ">
@@ -196,6 +224,11 @@ function App() {
         </div>
       </div>
       <div><button className="btn btn-outline-secondary mt-2" onClick={btnComenzar}>COMIENZA LA PARTIDA</button></div>
+      <div className="mt-4">
+        <h3>Marcador de Victorias</h3>
+        <ul style={{ listStyle: 'none' }}>
+        </ul>
+      </div>
     </div>
   );
 }
