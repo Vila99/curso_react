@@ -1,0 +1,58 @@
+body{
+    width: 100%;
+    height: 100vh;
+}
+
+.titulo{
+    font-family: 'Matemasie', sans-serif;
+}
+
+.titulo2{
+    font-family: 'Matemasie', sans-serif;
+    font-size: 100px;
+}
+
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #3a3939; 
+    text-align: center;
+    z-index: 10;
+}
+
+.carousel-caption .titulo2 {
+    font-size: 4.5rem; 
+    font-weight: bold;
+    text-shadow: 
+    2px 2px 0px rgba(255, 255, 255, 1),
+    -2px -2px 0px rgba(255, 255, 255, 1),
+    2px -2px 0px rgba(255, 255, 255, 1),
+    -2px 2px 0px rgba(255, 255, 255, 1);
+}
+
+.carousel-caption p {
+    font-size: 1.25rem; 
+    margin-top: 1rem;
+}
+
+
+/* DETALLES PARA LAS CARDS */
+.card #evento{
+    max-height: 600px;
+    object-fit: cover;
+}
+
+
+.card img{
+    max-height: 236px;
+}
+
+.card-hover-zoom {
+    transition: transform 0.3s ease;
+  }
+
+  .card-hover-zoom:hover {
+    transform: scale(1.05); /* Aumenta el tamaño de la tarjeta un 5% */
+  }
