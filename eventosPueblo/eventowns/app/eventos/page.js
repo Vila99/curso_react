@@ -9,7 +9,7 @@ export default function Page() {
             <div className="container">
             <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <div className="col">
-                <Link href="/localidades" className="card shadow-sm text-decoration-none text-reset card-hover-zoom">
+                <Link href="/eventos/localidades" className="card shadow-sm text-decoration-none text-reset card-hover-zoom">
                     <img src="/img/evento1.webp" alt="evento1" />
                     <div className="card-body">
                     <h3>Color Party</h3>

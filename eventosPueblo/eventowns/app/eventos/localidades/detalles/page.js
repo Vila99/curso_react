@@ -5,10 +5,10 @@ import 'bootstrap/dist/css/bootstrap.css'
 export default function Page() {
     return(
         <>
-        <h1 className="titulo d-flex align-items-center mt-3 justify-content-center">
+        <h1 className="titulo d-flex align-items-center mt-3 justify-content-center pt-2">
             Color Party
         </h1>
-        <div className="py-2">
+        <div className="py-5">
             <div
             className="card mb-4 mt-4 mx-5 d-flex align-items-center"
             style={{ maxWidth: "100%", maxHeight: 393 }}
@@ -17,7 +17,7 @@ export default function Page() {
                 <div className="col-md-6">
                 <img
                     id="evento"
-                    src="./img/evento1.webp"
+                    src="/img/evento1.webp"
                     className="img-fluid rounded"
                     alt="..."
                 />

@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
     <link rel="preconnect" href="https://fonts.googleapis.com"></link>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin></link>
     <link href="https://fonts.googleapis.com/css2?family=Matemasie&display=swap" rel="stylesheet"></link>
-      <body>
+      <body className='d-flex flex-column min-vh-100'>
         {/*BARRA NAVEGACION*/}
         <nav className="bg-dark">
         <header className="d-flex flex-wrap justify-content-center py-3">
@@ -47,7 +47,7 @@ export default function RootLayout({ children }) {
       </nav>
         {children}
       {/* FOOTER */}
-      <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 bg-dark px-5">
+      <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 bg-dark px-5 mt-auto">
         <p className="col-md-4 mb-0 text-light">© 2024 Company, Inc</p>
         <a
           href="/"

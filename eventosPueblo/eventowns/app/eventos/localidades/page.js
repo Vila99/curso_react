@@ -13,7 +13,7 @@ export default function Page() {
                 className="card card-hover-zoom mx-4"
                 style={{ width: 300, height: 70 }}
                 >
-                <Link  className="fs-3 text-center titulo text-decoration-none text-dark" href="/detalles">Fuentealvilla</Link>
+                <Link  className="fs-3 text-center titulo text-decoration-none text-dark" href="/eventos/localidades/detalles">Fuentealvilla</Link>
                 <p className="fs-9 text-center text-success">Disponible*</p>
                 </div>
                 <div
