@@ -6,8 +6,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'ElecScoot',
-  description: 'Shop ejemplo sobre Next.js',
+  title: 'EventTown',
+  description: 'Eventos en tu pueblo',
 }
 
 export default function RootLayout({ children }) {
@@ -32,18 +32,10 @@ export default function RootLayout({ children }) {
           </a>
           <ul className="nav nav-pills me-5 align-items-center">
             <li className="nav-item">
-              <a
-                href="./index.html"
-                className="nav-link active bg-light text-dark titulo"
-                aria-current="page"
-              >
-                Home
-              </a>
+            <Link  className="nav-link active bg-light text-dark titulo" href="/">Home</Link>
             </li>
             <li className="nav-item">
-              <a href="./evento.html" className="nav-link text-light titulo">
-                Eventos
-              </a>
+              <Link  className="nav-link text-light titulo" href="/eventos">Eventos</Link>
             </li>
             <li className="nav-item">
               <a href="#" className="nav-link text-light titulo">
