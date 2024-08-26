@@ -20,17 +20,14 @@ export default function RootLayout({ children }) {
       <body className='d-flex flex-column min-vh-100'>
         {/*BARRA NAVEGACION*/}
         <nav className="bg-dark">
-        <header className="d-flex flex-wrap justify-content-center py-3">
+        <header className="d-flex flex-wrap justify-content-center py-3 px-5">
           <a
             href="/"
             className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
           >
-            <svg className="bi me-2" width={40} height={32}>
-              <use xlinkHref="#bootstrap" />
-            </svg>
             <span className="fs-2 text-light titulo">EventTowns</span>
           </a>
-          <ul className="nav nav-pills me-5 align-items-center">
+          <ul className="nav nav-pills align-items-center">
             <li className="nav-item">
             <Link  className="nav-link active bg-light text-dark titulo" href="/">Home</Link>
             </li>

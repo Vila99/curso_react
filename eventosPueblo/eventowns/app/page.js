@@ -6,7 +6,7 @@ import Carousel from './component/CarouselClient';
 const Home = () => {
   return (
     <main>
-      <Carousel />
+      <Carousel/>
     </main>
   );
 };
