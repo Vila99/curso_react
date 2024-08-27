@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import LinkClient from './component/LinkClient'
 import { Inter } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.css'
 import './globals.css'
@@ -10,6 +12,7 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="en">
       <body>
@@ -19,7 +22,7 @@ export default function RootLayout({ children }) {
           data-bs-theme=""
         >
           <div className="container-fluid">
-            <a className="navbar-brand d-flex  align-items-center" href="/">
+            <Link className="navbar-brand d-flex  align-items-center" href="/">
               <img
                 src="./img/logo.png"
                 alt="Logo"
@@ -27,7 +30,7 @@ export default function RootLayout({ children }) {
                 className="d-inline-block align-text-top"
               />
               <span className="fs-2 ps-3 fw-bold">ElecScoot</span>
-            </a>
+            </Link>
             <button
               className="navbar-toggler"
               type="button"
@@ -42,19 +45,13 @@ export default function RootLayout({ children }) {
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav">
                 <li className="nav-item">
-                  <a className="nav-link active" href="/">
-                    Home
-                  </a>
+                  <LinkClient route="/" texto="Home"/>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="scooter.html">
-                    Scooters
-                  </a>
+                  <LinkClient route="/scooter" texto="Scooters"/>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="importacion.html">
-                    Importacion
-                  </a>
+                  <LinkClient route="/importacion" texto="Importacion"/>
                 </li>
               </ul>
             </div>

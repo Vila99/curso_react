@@ -1,9 +1,11 @@
 import Image from 'next/image'
+import CarouselClient from './component/CarouselClient'
+
 
 export default function Home() {
   return (
-    <main>
-      <h1 className="text-success">Hola Paco</h1>
-    </main>
+    <div className="container-fluid  pt-5 ">
+      <CarouselClient/>
+    </div>
   )
 }
