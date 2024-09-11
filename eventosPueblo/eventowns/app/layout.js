@@ -1,87 +1,48 @@
-import Link from 'next/link'
-import { Inter } from 'next/font/google'
-import 'bootstrap/dist/css/bootstrap.css'
-import './globals.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Poppins } from 'next/font/google';
+import Link from 'next/link';
 
-const inter = Inter({ subsets: ['latin'] })
+const poppins = Poppins({ 
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata = {
-  title: 'EventTown',
-  description: 'Eventos en tu pueblo',
-}
+  title: 'Eventown',
+  description: 'Eventos de nuestro pueblo',
+};
 
 export default function RootLayout({ children }) {
-
   return (
-    <html lang="en">
-    <link rel="preconnect" href="https://fonts.googleapis.com"></link>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin></link>
-    <link href="https://fonts.googleapis.com/css2?family=Matemasie&display=swap" rel="stylesheet"></link>
-      <body className='d-flex flex-column min-vh-100'>
-        {/*BARRA NAVEGACION*/}
-        <nav className="bg-dark">
-        <header className="d-flex flex-wrap justify-content-center py-3 px-5">
-          <a
-            href="/"
-            className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
-          >
-            <span className="fs-2 text-light titulo">EventTowns</span>
-          </a>
-          <ul className="nav nav-pills align-items-center">
-            <li className="nav-item">
-            <Link  className="nav-link active bg-light text-dark titulo" href="/">Home</Link>
-            </li>
-            <li className="nav-item">
-              <Link  className="nav-link text-light titulo" href="/eventos">Eventos</Link>
-            </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link text-light titulo">
-                Contacto
-              </a>
-            </li>
-          </ul>
-        </header>
-      </nav>
-        {children}
-      {/* FOOTER */}
-      <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 bg-dark px-5 mt-auto">
-        <p className="col-md-4 mb-0 text-light">© 2024 Company, Inc</p>
-        <a
-          href="/"
-          className="col-md-4 d-flex align-items-center justify-content-center mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
-        >
-          <p className="titulo text-light align-items-center mb-0">EvenTowns</p>
-        </a>
-        <ul className="nav col-md-4 justify-content-end">
-          <li className="nav-item">
-            <a href="#" className="nav-link px-2 text-light">
-              Home
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link px-2 text-light">
-              Features
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link px-2 text-light">
-              Pricing
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link px-2 text-light">
-              FAQs
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link px-2 text-light">
-              About
-            </a>
-          </li>
-        </ul>
-      </footer>
-
+    <html lang="es">
+      <body className={poppins.className}>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="container">
+            <Link href="/" className="navbar-brand">Eventown</Link>
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav">
+                <li className="nav-item">
+                  <Link href="/" className="nav-link">Inicio</Link>
+                </li>
+                <li className="nav-item">
+                  <Link href="/eventos" className="nav-link">Eventos</Link>
+                </li>
+                <li className="nav-item">
+                  <Link href="/localidades" className="nav-link">Locales</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <main className="container mt-4">
+          {children}
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" async></script>
       </body>
     </html>
-  )
+  );
 }
